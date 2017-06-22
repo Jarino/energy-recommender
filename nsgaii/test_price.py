@@ -1,0 +1,51 @@
+import nsgaii.price as price
+from pytest import approx
+import numpy as np
+
+
+TEST_CONSUMPTION = [
+    0.8690666666666667, 0.2751, 0.8806166666666667, 0.2760166666666667,
+    0.27486666666666665, 0.33193333333333336, 1.1265, 0.7456166666666667,
+    0.22618333333333332, 0.2648, 0.25548333333333334, 0.2579166666666667,
+    0.26453333333333334, 0.26276666666666665, 0.2634666666666667,
+    1.1012166666666667, 1.1273166666666667, 1.73865,
+    1.4849833333333333, 2.8754833333333334,
+    2.078533333333333, 1.6421833333333333, 2.594466666666667,
+    1.9557166666666668]
+
+TEST_SOLAR = [
+    -0.007983333333333334, -0.007383333333333334, -0.008,
+    -0.0074, -0.007383333333333334, -0.007716666666666667,
+    0.00023333333333333333, 0.1206, 0.3201833333333333,
+    0.8575333333333334, 1.5084333333333333, 2.0842666666666667,
+    2.4928666666666666, 2.72815, 2.8021333333333334, 2.674166666666667,
+    2.4004, 1.9383333333333332, 1.3062833333333332, 0.5934333333333334,
+    0.02808333333333333, -0.009783333333333333, -0.01045,
+    -0.009216666666666666]
+
+
+TEST_INPUT = (np.array(TEST_CONSUMPTION) - np.array(TEST_SOLAR)).clip(0)
+EPRICE_SUMMER_WEEKDAY = round(0.773674705, 2)
+EPRICE_SUMMER_WEEKEND = round(0.5952949375000001, 2)
+EPRICE_WINTER_WEEKDAY = 0.7823513378333334
+EPRICE_WINTER_WEEKEND = round(0.5952949375000001, 2)
+
+
+def test_winter_weekday():
+    calculated_price = price.calculate(TEST_INPUT, winter=True, weekend=False)
+    assert approx(calculated_price, rel=1e-2) == EPRICE_WINTER_WEEKDAY
+
+
+def test_winter_weekend():
+    calculated_price = price.calculate(TEST_INPUT, winter=True, weekend=True)
+    assert approx(calculated_price, rel=1e-2) == EPRICE_WINTER_WEEKEND
+
+
+def test_summer_weekday():
+    calculated_price = price.calculate(TEST_INPUT, winter=False, weekend=False)
+    assert approx(calculated_price, rel=1e-2) == EPRICE_SUMMER_WEEKDAY
+
+
+def test_summer_weekend():
+    calculated_price = price.calculate(TEST_INPUT, winter=False, weekend=True)
+    assert approx(calculated_price, rel=1e-2) == EPRICE_SUMMER_WEEKEND
