@@ -6,7 +6,7 @@ import nsgaii.utils as utl
 from nsgaii.objectives import cost_function
 
 
-def setup(actual, pv, ndim, bound_low, bound_up):
+def setup(actual, pv, ndim, bound_low, bound_up, battery=None):
     """
     creates toolbox with neccessary genetic operators
     """
@@ -16,7 +16,7 @@ def setup(actual, pv, ndim, bound_low, bound_up):
                      creator.Individual, toolbox.attr_float)
     toolbox.register('population', tools.initRepeat, list, toolbox.individual)
 
-    toolbox.register('evaluate', cost_function, actual, pv)
+    toolbox.register('evaluate', cost_function, actual, pv, battery)
     toolbox.register("mate", tools.cxSimulatedBinaryBounded,
                      low=bound_low, up=bound_up, eta=20.0)
     toolbox.register("mutate", tools.mutPolynomialBounded,

@@ -5,7 +5,12 @@ from deap.benchmarks.tools import hypervolume
 import numpy as np
 
 
-def search(toolbox, seed=None, gens=500, mu=200):
+def output(src, should):
+    if should:
+        print(src)
+
+
+def search(toolbox, seed=None, gens=500, mu=200, verbose=False):
     random.seed(seed)
 
     CXPB = 0.9  # pravdepodobnost krizenia?
@@ -34,7 +39,7 @@ def search(toolbox, seed=None, gens=500, mu=200):
     pop = toolbox.select(pop, len(pop))
     record = stats.compile(pop)
     logbook.record(gen=0, evals=len(invalid_ind), **record)
-    print(logbook.stream)
+    output(logbook.stream, verbose)
 
     # Begin the generational process
     for gen in range(1, gens):
@@ -60,7 +65,7 @@ def search(toolbox, seed=None, gens=500, mu=200):
         pop = toolbox.select(pop + offspring, mu)
         record = stats.compile(pop)
         logbook.record(gen=gen, evals=len(invalid_ind), **record)
-        print(logbook.stream)
+        output(logbook.stream, verbose)
 
     print("Final population hypervolume is %f"
           % hypervolume(pop, [11.0, 11.0, 11.0]))
