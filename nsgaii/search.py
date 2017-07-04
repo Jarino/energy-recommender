@@ -1,4 +1,5 @@
 import random
+import copy
 
 from deap import tools
 from deap.benchmarks.tools import hypervolume
@@ -10,6 +11,7 @@ def output(src, should):
         print(src)
 
 
+
 def search(toolbox, seed=None, gens=500, mu=200, verbose=False):
     random.seed(seed)
 
@@ -19,11 +21,11 @@ def search(toolbox, seed=None, gens=500, mu=200, verbose=False):
 
     # stats.register("avg", numpy.mean, axis=0)
     # stats.register("std", numpy.std, axis=0)
-    stats.register("min", np.min, axis=0)
-    stats.register("max", np.max, axis=0)
+    # stats.register("min", np.min, axis=0)
+    # stats.register("max", np.max, axis=0)
 
     logbook = tools.Logbook()
-    logbook.header = "gen", "evals", "std", "min", "avg", "max"
+    logbook.header = "gen", "evals", "hypervolume"
 
     # vytvorime inicialnu populaciu
     pop = toolbox.population(n=mu)
@@ -34,10 +36,14 @@ def search(toolbox, seed=None, gens=500, mu=200, verbose=False):
     for ind, fit in zip(invalid_ind, fitnesses):
         ind.fitness.values = fit
 
+    # Choose worst solution as reference point for hypervolume calculation
+    ref = np.max([x.fitness.values for x in pop], axis=0) + 1
+
     # This is just to assign the crowding distance to the individuals
     # no actual selection is done
     pop = toolbox.select(pop, len(pop))
     record = stats.compile(pop)
+    record['hypervolume'] = hypervolume(pop, ref)
     logbook.record(gen=0, evals=len(invalid_ind), **record)
     output(logbook.stream, verbose)
 
@@ -62,12 +68,11 @@ def search(toolbox, seed=None, gens=500, mu=200, verbose=False):
             ind.fitness.values = fit
 
         # Select the next generation population
-        pop = toolbox.select(pop + offspring, mu)
+        pop = toolbox.select(pop + offspring, mu, nd='log')
         record = stats.compile(pop)
+        record['hypervolume'] = hypervolume(pop, ref)
         logbook.record(gen=gen, evals=len(invalid_ind), **record)
         output(logbook.stream, verbose)
 
-    print("Final population hypervolume is %f"
-          % hypervolume(pop, [11.0, 11.0, 11.0]))
 
     return pop, logbook
