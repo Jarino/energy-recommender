@@ -1,6 +1,10 @@
 """Utility functions for manipulating with Pecan Street dataset"""
+import os
+from datetime import datetime
 
 import numpy as np
+import pandas as pd
+
 
 def select_range(df, start_date, end_date):
     """
@@ -40,3 +44,27 @@ def mape(y_true, y_pred):
     """
     return np.mean(np.abs((y_true - y_pred) / y_true)) * 100
 
+def load_all_users(data_path, group_by, features):
+    files = os.listdir(data_path)
+
+    data = pd.DataFrame()
+
+    for file in files:
+        full_path = os.path.join(data_path, file)
+        df = pd.read_csv(full_path)
+        df = select_range(df, datetime(2014,1,1), datetime(2015,12,31))
+        data = data.append(df.groupby(group_by).mean()[features])
+        
+    data = data.reset_index(drop=True)
+
+    return data
+
+def distance_matrix(data, metric):
+    dist_mat = np.zeros([len(data), len(data)])
+    indices = np.triu_indices(len(data),1)
+    for x,y in zip(indices[0], indices[1]):
+        dist_mat[x,y] = metric(data[x,:], data[y,:])[0]
+        
+    dist_mat += dist_mat.T
+
+    return dist_mat
