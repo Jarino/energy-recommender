@@ -16,7 +16,6 @@ class Predictor():
         self.target = target
         self.features = features
 
-
     def train(self, data):
         """
         Fit the model for provided data
@@ -50,7 +49,7 @@ class Predictor():
 
         return y_pred
 
-    def eval(self, predicted, df_test):
-        return Evaluation(self.target, predicted, df_test)
+    def eval(self, predicted, df_test, df_train):
+        return Evaluation(self.target, predicted, df_test, df_train)
 
         

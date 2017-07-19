@@ -15,11 +15,13 @@ def get_mean_and_std(evals):
 
 def print_evaluations(eval_list):
     mape_mean, mape_std  = get_mean_and_std([x.mape for x in eval_list])
+    mase_mean, mase_std = get_mean_and_std([x.mase for x in eval_list])
     mse_mean, mse_std = get_mean_and_std([x.mse for x in eval_list])
     rmse_mean, rmse_std = get_mean_and_std([x.rmse for x in eval_list])
     mae_mean, mae_std = get_mean_and_std([x.mae for x in eval_list])
-    output = 'MAPE:\t%f,\t%f\nMSE:\t%f,\t%f\nRMSE:\t%f,\t%f\nMAE:\t%f,\t%f' % (
+    output = 'MAPE:\t%f,\t%f\nMASE:\t%f,\t%f\nMSE:\t%f,\t%f\nRMSE:\t%f,\t%f\nMAE:\t%f,\t%f' % (
         mape_mean, mape_std,
+        mase_mean, mase_std,
         mse_mean, mse_std,
         rmse_mean, rmse_std,
         mae_mean, mae_std
