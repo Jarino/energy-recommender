@@ -1,5 +1,6 @@
 """
 """
+import time
 import numpy as np
 from sklearn import svm
 
@@ -26,9 +27,14 @@ class Predictor():
 
         X_train = data[self.features].as_matrix()
         y_train = data[self.target].as_matrix()
+        
+        start_time = time.time()
 
         self.clf.fit(X_train, y_train)
 
+        end_time = time.time()
+
+        return end_time - start_time
 
     def predict(self, X_test):
         """

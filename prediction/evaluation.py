@@ -6,10 +6,9 @@ from sklearn.metrics import mean_absolute_error
 
 import utils.metrics as metrics
 
-warnings.filterwarnings('error')
-
 class Evaluation():
     def __init__(self, target, predicted, df_test, df_train):
+        warnings.filterwarnings('error')
         y_true = df_test[target]
         y_train = df_train[target]
         self.mape = metrics.mape(y_true, predicted)

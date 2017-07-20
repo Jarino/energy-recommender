@@ -1,0 +1,1 @@
+USERS_FOLDER = '.exports/user_data_joined'
