@@ -3,6 +3,7 @@ Objective functions used to model the problem
 """
 import numpy as np
 from scipy.spatial.distance import euclidean
+from statsmodels.robust import mad
 
 import nsgaii.price as pr
 
@@ -30,6 +31,7 @@ def consumption_with_battery(consumption, excess_energy, battery):
 
 def smoothness(individual):
     return np.std(np.diff(individual))#/np.abs(np.mean(np.diff(individual)))
+    #return mad(individual)
 
 
 def cost_function_with_mape(actual, pv, battery, individual):

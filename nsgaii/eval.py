@@ -5,7 +5,7 @@ from nsgaii.utils import set_labels
 
 class Evaluation():
 
-    def __init__(self, pop, toolbox, logbook, actual, distance_treshold):
+    def __init__(self, pop, toolbox, logbook, actual, distance_treshold, smooth_treshold=1):
         self.actual = actual
         self.logbook = logbook
         self.toolbox = toolbox
@@ -15,7 +15,7 @@ class Evaluation():
 
         filter_mask = np.where(
             (self.objective_values[:,2] <= 0.5)
-            & (self.objective_values[:,3] <= 1)
+            & (self.objective_values[:,3] <= smooth_treshold)
             & (self.objective_values[:,1] <= distance_treshold)
             )[0]
 

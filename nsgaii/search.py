@@ -43,9 +43,12 @@ def search(toolbox, seed=None, gens=500, mu=200, verbose=False):
     # no actual selection is done
     pop = toolbox.select(pop, len(pop))
     record = stats.compile(pop)
-    record['hypervolume'] = hypervolume(pop, ref)
+    best_hypervolume = hypervolume(pop, ref)
+    record['hypervolume'] = best_hypervolume
     logbook.record(gen=0, evals=len(invalid_ind), **record)
     output(logbook.stream, verbose)
+
+    best_hypervolume_population = pop
 
     # Begin the generational process
     for gen in range(1, gens):
@@ -70,9 +73,17 @@ def search(toolbox, seed=None, gens=500, mu=200, verbose=False):
         # Select the next generation population
         pop = toolbox.select(pop + offspring, mu, nd='log')
         record = stats.compile(pop)
-        record['hypervolume'] = hypervolume(pop, ref)
+
+        current_hypervolume = hypervolume(pop, ref)
+
+        record['hypervolume'] = current_hypervolume
+
+        if current_hypervolume > best_hypervolume:
+            best_hypervolume = current_hypervolume
+            best_hypervolume_population = pop
+
         logbook.record(gen=gen, evals=len(invalid_ind), **record)
         output(logbook.stream, verbose)
 
 
-    return pop, logbook
+    return pop, logbook, best_hypervolume_population, best_hypervolume
